@@ -1,6 +1,4 @@
-pub fn zhu_li(){
-    println!("Zhu Li, do the thing!")
-}
+// functions needed across multiple challenges
 
 pub fn xor_with_key(text: &[u8], key: &[u8]) -> Vec<u8> {
 
@@ -22,11 +20,6 @@ pub fn xor_with_key(text: &[u8], key: &[u8]) -> Vec<u8> {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn test_zhu_li() {
-        zhu_li();
-    }
 
     #[test]
     fn test_bitwise_xor(){
