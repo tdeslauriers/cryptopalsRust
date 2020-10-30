@@ -1,4 +1,7 @@
 extern crate base64;
+extern crate openssl;
+
+use openssl::symm::{Cipher, encrypt, decrypt};
 use std::str;
 
 // functions needed across multiple challenges
@@ -49,6 +52,18 @@ pub fn pad(text: &[u8], key: &[u8]) -> Vec<u8> {
     }
     
     return padded;
+}
+
+pub fn aes128_ecb_encrypt(plaintext: &[u8], key: &[u8]) -> Vec<u8> {
+    
+    let ciphertext = encrypt(Cipher::aes_128_ecb(), key, None, plaintext).unwrap();
+    return ciphertext;
+}
+
+pub fn aes128_ecb_decrypt(ciphertext: &[u8], key: &[u8]) ->Vec<u8>{
+
+    let plaintext = decrypt(Cipher::aes_128_ecb(), key, None, ciphertext).unwrap();
+    return plaintext;
 }
 
 #[cfg(test)]
@@ -128,4 +143,23 @@ mod tests {
         assert_eq!(padded[6], 5);
         assert_eq!(padded[3], 2);
     }
+
+    #[test]
+    fn test_aes128() {
+        
+        let data = b"Lions have big teeth";
+        let key = b"needsToBeSixteen"; // aes128 takes 16 char key
+        let ciphertext = aes128_ecb_encrypt(data, key);
+
+        println!("{:?}", ciphertext);
+        assert_eq!(240, ciphertext[1]);
+        assert_eq!(254, ciphertext[8]);
+
+        let plaintext = aes128_ecb_decrypt(ciphertext.as_slice(), key);
+        println!("data: {:?}", data);
+        println!("plain: {:?}", plaintext);
+        assert_eq!(data, plaintext.as_slice());
+        println!("{}", str::from_utf8(&plaintext).unwrap())
+    }
+
 }
