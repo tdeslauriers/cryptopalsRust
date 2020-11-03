@@ -1,7 +1,7 @@
 extern crate base64;
 extern crate openssl;
 
-use openssl::symm::{Cipher, encrypt, decrypt};
+use openssl::symm::{Cipher, Crypter, Mode /*, encrypt, decrypt */};
 use std::str;
 
 // functions needed across multiple challenges
@@ -56,13 +56,29 @@ pub fn pad(text: &[u8], key: &[u8]) -> Vec<u8> {
 
 pub fn aes128_ecb_encrypt(plaintext: &[u8], key: &[u8]) -> Vec<u8> {
     
-    let ciphertext = encrypt(Cipher::aes_128_ecb(), key, None, plaintext).unwrap();
+    // Both of these methods work this. this one encrypts the padding.
+    //let ciphertext = encrypt(Cipher::aes_128_ecb(), key, None, plaintext).unwrap();
+    let encrypter = Crypter::new(Cipher::aes_128_ecb(), Mode::Encrypt, key, None);
+    let mut ciphertext = vec![0u8; plaintext.len() + key.len()];
+    
+    let count = encrypter.unwrap().update(plaintext, ciphertext.as_mut_slice()).unwrap();
+    ciphertext.truncate(count);
+
     return ciphertext;
 }
 
 pub fn aes128_ecb_decrypt(ciphertext: &[u8], key: &[u8]) ->Vec<u8>{
 
-    let plaintext = decrypt(Cipher::aes_128_ecb(), key, None, ciphertext).unwrap();
+    // this interface is producting and open ssl error.
+    // let plaintext = decrypt(Cipher::aes_128_ecb(), key, None, ciphertext).unwrap();
+    let decrypter = Crypter::new(Cipher::aes_128_ecb(), Mode::Decrypt, key, None);
+    let mut plaintext = vec![0u8; ciphertext.len() + key.len()];
+
+    let _count = decrypter.unwrap().update(ciphertext, plaintext.as_mut_slice()).unwrap();
+    // count is returning zero for decrypter... 
+    // truncating with key length instead...
+    plaintext.truncate(key.len());
+
     return plaintext;
 }
 
