@@ -56,12 +56,12 @@ pub fn pad(text: &[u8], key: &[u8]) -> Vec<u8> {
 
 pub fn aes128_ecb_encrypt(plaintext: &[u8], key: &[u8]) -> Vec<u8> {
     
-    // Both of these methods work this. this one encrypts the padding.
+    // Both of these methods work. this one encrypts the padding.
     //let ciphertext = encrypt(Cipher::aes_128_ecb(), key, None, plaintext).unwrap();
     let encrypter = Crypter::new(Cipher::aes_128_ecb(), Mode::Encrypt, key, None);
     let mut ciphertext = vec![0u8; plaintext.len() + key.len()];
     
-    let count = encrypter.unwrap().update(plaintext, ciphertext.as_mut_slice()).unwrap();
+    let count = encrypter.unwrap().update(plaintext, &mut ciphertext).unwrap();
     ciphertext.truncate(count);
 
     return ciphertext;
@@ -74,7 +74,7 @@ pub fn aes128_ecb_decrypt(ciphertext: &[u8], key: &[u8]) ->Vec<u8>{
     let decrypter = Crypter::new(Cipher::aes_128_ecb(), Mode::Decrypt, key, None);
     let mut plaintext = vec![0u8; ciphertext.len() + key.len()];
 
-    let _count = decrypter.unwrap().update(ciphertext, plaintext.as_mut_slice()).unwrap();
+    let _count = decrypter.unwrap().update(ciphertext, &mut plaintext).unwrap();
     // count is returning zero for decrypter... 
     // truncating with key length instead...
     plaintext.truncate(key.len());
