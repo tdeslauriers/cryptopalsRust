@@ -1,5 +1,5 @@
 
-*Normally, I would break this up into smaller "class files," but for the sake of reading thru the challenge in one spot, I put it all here.*
+*Normally, I would break this up into smaller "class files," but for the sake of reading thru the challenge in one spot, I put it all [here in main](https://github.com/tdeslauriers/cryptopalsRust/blob/main/set2/chal12/src/main.rs).*
 
 # Byte-at-a-time ECB decryption (Simple)
 
